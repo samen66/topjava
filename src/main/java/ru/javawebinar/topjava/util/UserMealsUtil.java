@@ -76,6 +76,7 @@ public class UserMealsUtil {
     public static List<UserMealWithExcess> filteredByStreams2(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO Implement by streams
         List<UserMealWithExcess> userMealWithExcessList = new ArrayList<>();
+        userMealWithExcessList.add(newUserExcess(meals.get(0), true));
         return userMealWithExcessList;
     }
 
