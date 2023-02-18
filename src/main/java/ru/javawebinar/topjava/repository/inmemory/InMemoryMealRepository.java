@@ -4,10 +4,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -22,7 +19,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, Integer userId) {
-        if (meal.getId() != userId)
+        if (meal.getUserId() != userId)
             return null;
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
@@ -35,22 +32,22 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, Integer userId) {
-        if (repository.get(id).getId() != userId)
+        if (repository.get(id).getUserId() != userId)
             return false;
         return repository.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, Integer userId) {
-        if (repository.get(id).getId() != userId)
+        if (repository.get(id).getUserId() != userId)
             return null;
         return repository.get(id);
     }
 
     @Override
-    public Collection<Meal> getAll(Integer userId) {
+    public List<Meal> getAll(Integer userId) {
 
-        return repository.values().stream().filter(meal -> Objects.equals(meal.getId(), userId))
+        return repository.values().stream().filter(meal -> Objects.equals(meal.getUserId(), userId))
                 .sorted(Meal::compareTo).collect(Collectors.toList());
     }
 }
