@@ -1,13 +1,17 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.Util;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -48,8 +52,20 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public List<Meal> getAll(Integer userId) {
 
-        return repository.values().stream().filter(meal -> Objects.equals(meal.getUserId(), userId))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList());
+        return getAllFilteredMeals(userId, meal -> true);
+    }
+
+    @Override
+    public List<Meal> betweenHalfOpen(LocalDateTime start, LocalDateTime end, Integer userId) {
+        return getAllFilteredMeals(userId, meal -> Util.isBetweenHalfOpen(meal.getDateTime(), start, end));
+    }
+
+    private List<Meal> getAllFilteredMeals(Integer userId, Predicate<Meal> filter){
+        List<Meal> mealList = repository.values().stream().filter(meal -> Objects.equals(meal.getUserId(), userId)).collect(Collectors.toList());
+        return CollectionUtils.isEmpty(mealList) ? Collections.emptyList():
+                mealList.stream().filter(filter)
+                        .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                        .collect(Collectors.toList());
     }
 }
 
