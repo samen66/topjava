@@ -31,6 +31,10 @@ public abstract class AbstractMealController {
         log.info("getAll meal by id {}", userId);
         return MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
     }
+    public List<Meal> getAllMeal() {
+        log.info("getAllMeal meal by id {}", userId);
+        return service.getAll(userId);
+    }
     public List<MealTo> getBetweenHalfOpen(@Nullable LocalDate startDate, @Nullable LocalDate endDate,
                                            @Nullable LocalTime startTime, @Nullable LocalTime endTime) {
         log.info("getBetweenHalfOpen meal by id {}", userId);
